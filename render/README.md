@@ -13,7 +13,7 @@ This folder contains the full production-ready bot for deployment on [Render.com
 ## Folders
 - `templates/`: HTML templates for admin dashboard
 - `static/`: CSS and cartela assets
-- `audio/`: Amharic and English audio files
+- `audio/`: Amharic audio files
 - `utils/`: Helper functions (referral, validation, etc.)
 
 ## Deployment Notes
