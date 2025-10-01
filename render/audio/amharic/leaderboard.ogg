@@ -1,0 +1,5 @@
+def send_referral_audio(chat_id: int):
+    path = "render/audio/amharic/referral.ogg"
+    if os.path.exists(path):
+        with open(path, "rb") as audio_file:
+            bot.send_audio(chat_id, audio_file)
