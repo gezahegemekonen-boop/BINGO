@@ -24,3 +24,5 @@ This folder contains the full production-ready bot for deployment on [Render.com
 - Webhook should point to your Render URL
 
 This folder is ready for live deployment.
+        
+        └── winner.ogg
