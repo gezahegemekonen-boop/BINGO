@@ -1,0 +1,5 @@
+def send_winner_audio(chat_id: int):
+    path = "render/audio/amharic/winner.ogg"
+    if os.path.exists(path):
+        with open(path, "rb") as audio_file:
+            bot.send_audio(chat_id, audio_file)
