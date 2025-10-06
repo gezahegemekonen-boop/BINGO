@@ -23,8 +23,8 @@ game = BingoGame(game_id=1)
 logging.basicConfig(level=logging.INFO)
 
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL", "https://arada-bingo-dv-oxct.onrender.com")
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://arada-bingo-dv-oxct.onrender.com/cartela")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL", "https://arada-bingo.onrender.com")
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://arada-bingo.onrender.com/cartela")
 ADMIN_IDS = [int(x) for x in os.getenv("ADMIN_IDS", "364344971").split(",")]
 
 flask_app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -122,6 +122,7 @@ def payout_winner():
     return jsonify({"status": "error"})
 
 LANGUAGE_MAP = { ... }  # Keep your full bilingual dictionary here
+
 def get_lang(context, fallback="en"):
     lang_code = context.chat_data.get("language", fallback)
     return LANGUAGE_MAP.get(lang_code, LANGUAGE_MAP["en"])
@@ -187,15 +188,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ], resize_keyboard=True)
 
     await update.message.reply_text(lang["welcome"], reply_markup=keyboard)
-
-    if user_language == "am":
-        try:
-            await context.bot.send_voice(
-                chat_id=update.effective_chat.id,
-                voice=InputFile("audio/welcome_am.ogg")
-            )
-        except Exception:
-            pass
 
 async def deposit(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = get_lang(context)
@@ -419,16 +411,6 @@ async def handle_user_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
             db.session.add(tx)
             db.session.commit()
             await update.message.reply_text(f"✅ Withdrawal request for {amount} birr submitted.")
-
-            if user.language == "am":
-                try:
-                    await context.bot.send_voice(
-                        chat_id=update.effective_chat.id,
-                        voice=InputFile("audio/withdraw_am.ogg")
-                    )
-                except Exception:
-                    pass
-
         except ValueError:
             await update.message.reply_text("❌ Please enter a valid number.")
 
@@ -471,7 +453,7 @@ async def main():
     await telegram_app.run_webhook(
         listen="0.0.0.0",
         port=int(os.environ.get("PORT", 5000)),
-        webhook_url=os.environ["WEBHOOK_URL"]
+        webhook_url=WEBHOOK_URL
     )
 
 if __name__ == "__main__":
@@ -479,4 +461,3 @@ if __name__ == "__main__":
     nest_asyncio.apply()
     import asyncio
     asyncio.get_event_loop().run_until_complete(main())
-
