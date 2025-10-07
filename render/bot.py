@@ -349,53 +349,59 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
 from telegram import BotCommand
 
 async def main():
-    # Register command handlers
+    # ✅ Register all your command handlers
     telegram_app.add_handler(CommandHandler("start", start))
-    telegram_app.add_handler(CommandHandler("play", play_game))
     telegram_app.add_handler(CommandHandler("deposit", deposit))
     telegram_app.add_handler(CommandHandler("withdraw", withdraw))
     telegram_app.add_handler(CommandHandler("balance", balance))
+    telegram_app.add_handler(CommandHandler("referral_contest", referral_contest))
     telegram_app.add_handler(CommandHandler("invite", invite))
-    telegram_app.add_handler(CommandHandler("transaction", transaction))
-    telegram_app.add_handler(CommandHandler("game", game_history))
-    telegram_app.add_handler(CommandHandler("instruction", instruction))
-    telegram_app.add_handler(CommandHandler("convert", convert))
     telegram_app.add_handler(CommandHandler("language", language))
+    telegram_app.add_handler(CommandHandler("play", play_game))
+    telegram_app.add_handler(CommandHandler("call", call_number))
+    telegram_app.add_handler(CommandHandler("leaderboard", leaderboard))
+    telegram_app.add_handler(CommandHandler("summary", summary))
+    telegram_app.add_handler(CommandHandler("mycartela", mycartela))
+    telegram_app.add_handler(CommandHandler("mygames", mygames))
+    telegram_app.add_handler(CommandHandler("referrals", referrals))
+    telegram_app.add_handler(CommandHandler("toggle_sound", toggle_sound))
+    telegram_app.add_handler(CommandHandler("report_bug", report_bug))
+    telegram_app.add_handler(CommandHandler("schedule_game", schedule_game))
+    telegram_app.add_handler(CommandHandler("broadcast", admin_broadcast))
+    telegram_app.add_handler(CommandHandler("adminstats", admin_stats))
+    telegram_app.add_handler(CommandHandler("cartela_preview", cartela_preview))
 
-    # Callback + message + error
-    telegram_app.add_handler(CallbackQueryHandler(language, pattern="lang_"))
+    telegram_app.add_handler(CallbackQueryHandler(toggle_language, pattern="toggle_lang"))
     telegram_app.add_handler(MessageHandler(filters.TEXT, handle_user_input))
     telegram_app.add_error_handler(error_handler)
 
-    # Set visible Telegram bot commands
+    logging.info("✅ Arada Bingo Ethiopia bot is starting...")
+
+    flask_app.app_context().push()
+
+    # ✅ Set Telegram commands (so they appear in the menu)
     commands = [
         BotCommand("start", "Start the game"),
         BotCommand("play", "Play Bingo"),
-        BotCommand("deposit", "Deposit funds"),
         BotCommand("withdraw", "Withdraw balance"),
         BotCommand("balance", "Check balance"),
-        BotCommand("invite", "Invite friends to play Bingo"),
+        BotCommand("deposit", "Deposit funds"),
+        BotCommand("language", "Choose language"),
+        BotCommand("convert", "Convert coins to wallet"),
         BotCommand("transaction", "View transaction history"),
         BotCommand("game", "View game history"),
         BotCommand("instruction", "Game instructions"),
-        BotCommand("convert", "Convert coins to wallet"),
-        BotCommand("language", "Choose language")
+        BotCommand("invite", "Invite friends to play Bingo")
     ]
     await telegram_app.bot.set_my_commands(commands)
 
-    # Flask context setup
-    flask_app.app_context().push()
-    logging.info("✅ Arada Bingo Ethiopia bot is starting...")
+    # 🧩 FIXED SECTION — run polling instead of webhook
+    await telegram_app.bot.delete_webhook(drop_pending_updates=True)
+    await telegram_app.run_polling(allowed_updates=Update.ALL_TYPES)
 
-    # Start webhook server
-    await telegram_app.bot.set_webhook(WEBHOOK_URL)
-await telegram_app.run_polling()
 
-    )
-# ------------------ Entry Point ------------------
 if __name__ == "__main__":
     import nest_asyncio
-    import asyncio
-
     nest_asyncio.apply()
+    import asyncio
     asyncio.get_event_loop().run_until_complete(main())
