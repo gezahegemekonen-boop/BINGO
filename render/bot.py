@@ -419,6 +419,8 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE):
     if isinstance(update, Update) and update.message:
         await update.message.reply_text("⚠️ Something went wrong. Please try again.")
 
+from telegram import BotCommand
+
 async def main():
     telegram_app.add_handler(CommandHandler("start", start))
     telegram_app.add_handler(CommandHandler("deposit", deposit))
@@ -448,6 +450,23 @@ async def main():
     logging.info("✅ Arada Bingo Ethiopia bot is starting...")
 
     flask_app.app_context().push()
+
+    # 🧩 ADD THIS SECTION
+    commands = [
+        BotCommand("start", "Start the game"),
+        BotCommand("play", "Play Bingo"),
+        BotCommand("withdraw", "Withdraw balance"),
+        BotCommand("balance", "Check balance"),
+        BotCommand("deposit", "Deposit funds"),
+        BotCommand("language", "Choose language"),
+        BotCommand("convert", "Convert coins to wallet"),
+        BotCommand("transaction", "View transaction history"),
+        BotCommand("game", "View game history"),
+        BotCommand("instruction", "Game instructions"),
+        BotCommand("invite", "Invite friends to play Bingo")
+    ]
+    await telegram_app.bot.set_my_commands(commands)
+    # 🧩 END
 
     await telegram_app.bot.delete_webhook(drop_pending_updates=True)
     await telegram_app.run_webhook(
