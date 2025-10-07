@@ -388,14 +388,10 @@ async def main():
     logging.info("✅ Arada Bingo Ethiopia bot is starting...")
 
     # Start webhook server
-    await telegram_app.bot.delete_webhook(drop_pending_updates=True)
-    await telegram_app.run_webhook(
-        listen="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000)),
-        webhook_url=WEBHOOK_URL
+    await telegram_app.bot.set_webhook(WEBHOOK_URL)
+await telegram_app.run_polling()
+
     )
-
-
 # ------------------ Entry Point ------------------
 if __name__ == "__main__":
     import nest_asyncio
